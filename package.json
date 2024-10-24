@@ -1,9 +1,9 @@
 {
-    "name": "convert-end-of-line-on-save",
-    "displayName": "Convert End Of Line On Save",
+    "name": "auto-convert-end-of-line",
+    "displayName": "Auto Convert End Of Line",
     "publisher": "crendking",
-    "description": "",
-    "version": "0.1.0",
+    "description": "Automatically convert files with configured end-of-line sequence",
+    "version": "0.2.0",
     "license": "See license in LICENSE.txt",
     "engines": {
         "vscode": "^1.49.0"
@@ -19,7 +19,7 @@
     "icon": "media/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/CrendKing/convert-end-of-line-on-save"
+        "url": "https://github.com/CrendKing/auto-convert-end-of-line"
     },
     "activationEvents": [
         "onStartupFinished"
