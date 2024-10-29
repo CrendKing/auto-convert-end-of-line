@@ -1,5 +1,3 @@
-'use strict'
-
 import * as vscode from 'vscode'
 
 const POST_EVENT_TRIGGER_DELAY = 100
