@@ -1,7 +1,26 @@
 import * as vscode from 'vscode'
 
-const POST_EVENT_TRIGGER_DELAY = 100
 const NOTIFICATION_DURATION_MS = 5000
+
+let targetEol: vscode.EndOfLine | null
+let eolText: string | null
+
+function loadConfigEol() {
+    switch (vscode.workspace.getConfiguration('files').get<string>('eol')) {
+        case '\n':
+            targetEol = vscode.EndOfLine.LF
+            eolText = 'LF'
+            break
+        case '\r\n':
+            targetEol = vscode.EndOfLine.CRLF
+            eolText = 'CRLF'
+            break
+        default:
+            targetEol = null
+            eolText = null
+            break
+    }
+}
 
 function showMessageWithTimeout(message: string, duration: number) {
     vscode.window.withProgress({
@@ -13,46 +32,42 @@ function showMessageWithTimeout(message: string, duration: number) {
     })
 }
 
-function changeEol(document?: vscode.TextDocument) {
-    if (!document ||
-        document.isUntitled ||
-        document.languageId === 'code-text-binary' ||
-        document !== vscode.window.activeTextEditor?.document) {
+function changeEol(editor?: vscode.TextEditor) {
+    console.log(editor?.document.fileName)
+
+    if (!editor) {
         return
     }
 
-    const [targetEol, eolText] = function () {
-        const filesEolConfig = vscode.workspace.getConfiguration('files').get<string>('eol')
-        switch (filesEolConfig) {
-            case '\n':
-                return [vscode.EndOfLine.LF, 'LF']
-            case '\r\n':
-                return [vscode.EndOfLine.CRLF, 'CRLF']
-            default:
-                return [null, null]
-        }
-    }()
+    const document = editor.document
+    if (!document ||
+        document.isUntitled ||
+        document.languageId === 'code-text-binary') {
+        return
+    }
 
     if (targetEol && document.eol !== targetEol) {
-        vscode.window.activeTextEditor!.edit(function (edit) {
-            edit.setEndOfLine(targetEol)
+        editor.edit(function (edit) {
+            edit.setEndOfLine(targetEol!)
             showMessageWithTimeout(`Changed end-of-line sequence to ${eolText}`, NOTIFICATION_DURATION_MS)
         })
     }
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    context.subscriptions.push(
-        vscode.workspace.onDidOpenTextDocument(async function (document) {
-            // onDidOpenTextDocument() is triggered before window.activeTextEditor.document is updated
-            await new Promise(resolve => setTimeout(resolve, POST_EVENT_TRIGGER_DELAY))
+    loadConfigEol()
 
-            changeEol(document)
+    context.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor(changeEol),
+        vscode.workspace.onDidChangeConfiguration(evt => {
+            if (evt.affectsConfiguration('files.eol')) {
+                loadConfigEol()
+            }
         })
     )
 
     // the extension can be activated after the initial document is already opened
-    changeEol(vscode.window.activeTextEditor?.document)
+    changeEol(vscode.window.activeTextEditor)
 }
 
 export function deactivate() { }

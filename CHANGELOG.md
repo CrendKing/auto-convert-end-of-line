@@ -1,3 +1,8 @@
+# 0.2.1
+
+* Use the more reliable "onDidChangeActiveTextEditor" event, which triggers conversion whenever the active editor (tab) is switched.
+* Calculate target EOL only when the "files.eol" configuration is changed instead of before every conversion.
+
 # 0.2.0
 
 * Change the EOL when file is opened instead of when it is saved, offering user a chance to undo the pending change.
