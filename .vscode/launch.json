@@ -10,7 +10,14 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "D:/Setting/Profile/Desktop/Alan Wake 2.py",
+                "D:/Setting/Profile/Desktop/BG3.py",
+                "D:/Setting/Profile/Desktop/Crusader Kings III.py",
+                "D:/Setting/Profile/Desktop/Dota 2.py",
+                "D:/Setting/Profile/Desktop/Elden Ring.py",
+                "D:/Setting/Profile/Desktop/Octopath Traveler II.py",
+                "D:/Setting/Profile/Desktop/Warframe.py",
             ],
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
