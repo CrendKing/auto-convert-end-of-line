@@ -2,23 +2,14 @@ import * as vscode from 'vscode'
 
 const NOTIFICATION_DURATION_MS = 5000
 
-let targetEol: vscode.EndOfLine | null
-let eolText: string | null
-
-function loadConfigEol() {
+function loadConfigEol(): vscode.EndOfLine | null {
     switch (vscode.workspace.getConfiguration('files').get<string>('eol')) {
         case '\n':
-            targetEol = vscode.EndOfLine.LF
-            eolText = 'LF'
-            break
+            return vscode.EndOfLine.LF
         case '\r\n':
-            targetEol = vscode.EndOfLine.CRLF
-            eolText = 'CRLF'
-            break
+            return vscode.EndOfLine.CRLF
         default:
-            targetEol = null
-            eolText = null
-            break
+            return null
     }
 }
 
@@ -32,36 +23,34 @@ function showMessageWithTimeout(message: string, duration: number) {
     })
 }
 
-function changeEol(editor?: vscode.TextEditor) {
-    console.log(editor?.document.fileName)
-
-    if (!editor) {
-        return
-    }
-
-    const document = editor.document
-    if (!document ||
-        document.isUntitled ||
-        document.languageId === 'code-text-binary') {
-        return
-    }
-
-    if (targetEol && document.eol !== targetEol) {
-        editor.edit(function (edit) {
-            edit.setEndOfLine(targetEol!)
-            showMessageWithTimeout(`Changed end-of-line sequence to ${eolText}`, NOTIFICATION_DURATION_MS)
-        })
-    }
-}
-
 export function activate(context: vscode.ExtensionContext) {
-    loadConfigEol()
+    let configEol = loadConfigEol()
+
+    function changeEol(editor?: vscode.TextEditor) {
+        if (!editor) {
+            return
+        }
+
+        const document = editor.document
+        if (!document ||
+            document.isUntitled ||
+            document.languageId === 'code-text-binary') {
+            return
+        }
+
+        if (configEol && document.eol !== configEol) {
+            editor.edit(function (edit) {
+                edit.setEndOfLine(configEol!)
+                showMessageWithTimeout(`Changed end-of-line sequence to ${vscode.EndOfLine[configEol!]}`, NOTIFICATION_DURATION_MS)
+            })
+        }
+    }
 
     context.subscriptions.push(
         vscode.window.onDidChangeActiveTextEditor(changeEol),
         vscode.workspace.onDidChangeConfiguration(evt => {
             if (evt.affectsConfiguration('files.eol')) {
-                loadConfigEol()
+                configEol = loadConfigEol()
             }
         })
     )

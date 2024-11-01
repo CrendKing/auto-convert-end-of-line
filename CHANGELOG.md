@@ -1,3 +1,7 @@
+# 0.2.2
+
+Simplify code
+
 # 0.2.1
 
 * Use the more reliable "onDidChangeActiveTextEditor" event, which triggers conversion whenever the active editor (tab) is switched.
