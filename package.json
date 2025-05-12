@@ -3,7 +3,7 @@
     "displayName": "Auto Convert End Of Line",
     "publisher": "crendking",
     "description": "Automatically convert files with configured end-of-line sequence",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "license": "See license in LICENSE.txt",
     "engines": {
         "vscode": "^1.49.0"
@@ -19,7 +19,7 @@
     "icon": "media/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/CrendKing/auto-convert-end-of-line"
+        "url": "https://github.com/CrendKing/vscode-auto-convert-end-of-line"
     },
     "activationEvents": [
         "onStartupFinished"
